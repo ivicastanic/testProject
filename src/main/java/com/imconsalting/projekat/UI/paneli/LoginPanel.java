@@ -42,7 +42,7 @@ public class LoginPanel extends GridPane {
         cancelButton.setOnAction(this::onCancelButtonClick);
         flowPane.getChildren().addAll(loginButton, cancelButton);
         add(flowPane, 1, 2);
-        //message
+        //messag
         add(messageLabel, 1, 3);
     }
 
