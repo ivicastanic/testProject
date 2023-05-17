@@ -1,8 +1,7 @@
 package com.imconsalting.projekat.UI;
 
+import com.imconsalting.projekat.UI.paneli.LoginPanel;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 
@@ -13,8 +12,8 @@ public class EntryPointOfApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        StartPanel startPanel=new StartPanel();
-        AbstractScene.setScene(startPanel);
+        LoginPanel loginPanel=new LoginPanel();
+        AbstractScene.setScene(loginPanel);
         stage.setScene(AbstractScene.getScene());
         stage.setTitle("Projekat");
 

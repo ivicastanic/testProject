@@ -1,11 +1,14 @@
-package com.imconsalting.projekat.UI;
+package com.imconsalting.projekat.UI.paneli;
 
 
+import com.imconsalting.projekat.UI.AbstractScene;
+import com.imconsalting.projekat.UI.paneli.LoginPanel;
+import com.imconsalting.projekat.customer.CustomerPanel;
 import com.imconsalting.projekat.employee.EmployeePanel;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
@@ -21,7 +24,7 @@ public class StartPanel extends VBox {
     private final Label welcomeLabel = new Label("WELCOME");
     private final Button buttonCustomers = new Button("Customers");
     private final Button buttonEmployees = new Button("Employees");
-    private final Button buttonOthers = new Button("Others");
+    private final Button buttonLogout = new Button("Odjava");
     private final Label dateLabel = new Label();
 
     private final Image image=new Image("firma.png");
@@ -29,11 +32,12 @@ public class StartPanel extends VBox {
     public StartPanel(){
         setSpacing(20);
         setPadding(new Insets(10));
+        setAlignment(Pos.CENTER);
 
         BorderPane borderPane=new BorderPane(welcomeLabel);
 
         HBox hBox=new HBox(10);
-        hBox.getChildren().addAll(buttonCustomers,buttonEmployees,buttonOthers);
+        hBox.getChildren().addAll(buttonCustomers,buttonEmployees,buttonLogout);
 
         HBox hBox1=new HBox(10);
         ImageView imageView = new ImageView(image);
@@ -47,9 +51,14 @@ public class StartPanel extends VBox {
 
         dateLabel.setText(returnDate());
 
-        buttonOthers.setOnAction(this::onClickOthersButton);
-        //buttonCustomers.setOnAction(this::onClickCustomerButton);
+        buttonLogout.setOnAction(this::onClickOthersButton);
+        buttonCustomers.setOnAction(this::onClickCustomerButton);
         buttonEmployees.setOnAction(this::onClickEmployeeButton);
+    }
+
+    private void onClickCustomerButton(ActionEvent actionEvent) {
+        CustomerPanel customerPanel=new CustomerPanel();
+        AbstractScene.setScene(customerPanel);
     }
 
     private void onClickEmployeeButton(ActionEvent actionEvent) {
@@ -57,15 +66,15 @@ public class StartPanel extends VBox {
         AbstractScene.setScene(employeePanel);
     }
 
+    private void onClickOthersButton(ActionEvent e) {
+        AbstractScene.setScene(new LoginPanel());
+    }
+
     private String returnDate() {
         LocalDate localDate = LocalDate.now();
         return localDate.toString();
     }
 
-    private void onClickOthersButton(ActionEvent e) {
-        NekiPanel nekiPanel=new NekiPanel();
-        AbstractScene.setScene(nekiPanel);
-    }
 
 }
 

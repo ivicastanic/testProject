@@ -23,4 +23,7 @@ module com.imconsalting.projekat {
 
     exports com.imconsalting.projekat;
     exports com.imconsalting.projekat.UI;
+    exports com.imconsalting.projekat.UI.paneli;
+    opens com.imconsalting.projekat.UI.paneli to org.hibernate.orm.core;
+
 }

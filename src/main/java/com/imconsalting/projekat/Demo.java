@@ -2,6 +2,7 @@ package com.imconsalting.projekat;
 
 import com.imconsalting.projekat.action.Action;
 import com.imconsalting.projekat.customer.Customer;
+import com.imconsalting.projekat.employee.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -51,10 +52,11 @@ public class Demo {
         employeeList.forEach(System.out::println);*/
 
         manager.getTransaction().begin();
-        Query query=manager.createQuery("SELECT c FROM Action c");
-        List<Action> customerList=query.getResultList();
+        Query query=manager.createQuery("SELECT c FROM Employee c");
+        List<Employee> employeeList=query.getResultList();
         manager.getTransaction().commit();
-        customerList.forEach(System.out::println);
+        employeeList.forEach(System.out::println);
+
 
 
         /*manager.getTransaction().begin();
