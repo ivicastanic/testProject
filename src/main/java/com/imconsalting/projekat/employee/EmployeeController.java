@@ -18,7 +18,7 @@ public class EmployeeController {
         EntityManager entityManager=entityManagerFactory.createEntityManager();
 
         entityManager.getTransaction().begin();
-        Query query=entityManager.createQuery("SELECT e FROM Employee e");
+        Query query=entityManager.createNamedQuery("Employee.findAll");
         employees=query.getResultList();
         entityManager.getTransaction().commit();
 

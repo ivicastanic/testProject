@@ -14,6 +14,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "customers", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c")
+})
 public class Customer implements Serializable {
     @Id
     @Column(name = "id", insertable = false, unique = false)

@@ -12,7 +12,8 @@ module com.imconsalting.projekat {
     opens com.imconsalting.projekat to javafx.fxml;
     opens com.imconsalting.projekat.customer to javafx.base,org.hibernate.orm.core;
     opens com.imconsalting.projekat.response to org.hibernate.orm.core;
-    opens com.imconsalting.projekat.employee to org.hibernate.orm.core,javafx.base;
+    opens com.imconsalting.projekat.employee to org.hibernate.orm.core,javafx.base,jakarta.persistence;
+    opens com.imconsalting.projekat.employee.privilege to org.hibernate.orm.core;
     opens com.imconsalting.projekat.profession to org.hibernate.orm.core;
     opens com.imconsalting.projekat.action to org.hibernate.orm.core;
     opens com.imconsalting.projekat.company to org.hibernate.orm.core;

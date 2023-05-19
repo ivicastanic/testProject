@@ -1,27 +1,28 @@
 package com.imconsalting.projekat.UI.paneli;
 
-import com.imconsalting.projekat.UI.AbstractScene;
+import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.employee.Employee;
 import jakarta.persistence.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 
 public class LoginPanel extends GridPane {
+
     private final Label usernameLabel = new Label("Korisničko ime: ");
     private final Label passwordLabel = new Label("Lozinka: ");
     private final TextField usernameTextField = new TextField();
     private final PasswordField passwordField = new PasswordField();
     private final Button loginButton = new Button("Prijava");
     private final Button cancelButton = new Button("Odustani");
-    private final Label messageLabel = new Label();//ovdje ne piše ništa..sadržaj ćemo možda dinamički popuniti
+    private final Label messageLabel = new Label();
+
 
     public LoginPanel() {
         setHgap(10);
@@ -40,6 +41,7 @@ public class LoginPanel extends GridPane {
         flowPane.setAlignment(Pos.CENTER_RIGHT);
         loginButton.setOnAction(this::onLoginButtonClick);
         cancelButton.setOnAction(this::onCancelButtonClick);
+        flowPane.setHgap(5);
         flowPane.getChildren().addAll(loginButton, cancelButton);
         add(flowPane, 1, 2);
         //message
@@ -53,21 +55,30 @@ public class LoginPanel extends GridPane {
     }
 
 
+
     private void onLoginButtonClick(ActionEvent event) {
+
         String username = usernameTextField.getText();
         String password = passwordField.getText();
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
             messageLabel.setText("Nije dozvoljeno prazan unos korisničkog imena ili lozinke");
             return;
         }
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("projectPU");
+        login(username,password);
+    }
+
+    private void login(String username,String password){
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        Query query = entityManager.createQuery("SELECT e FROM Employee e WHERE e.username = :username");
+        Query query = entityManager.createNamedQuery("Employee.findByUsername");
         query.setParameter("username", username);
         try {
             Employee employee = (Employee) query.getSingleResult();
             if (employee != null && password.equals(employee.getPassword())) {
-                AbstractScene.setScene(new StartPanel());
+                Controller.setCurrentEmployee(employee);
+                Scene scene=new Scene(new StartPanel());
+                Controller.instance().getMainStage().setScene(scene);
+                Controller.instance().getMainStage().setTitle("Pocetna");
             } else {
                 messageLabel.setText("Neispravna lozinka.");
             }
@@ -75,8 +86,5 @@ public class LoginPanel extends GridPane {
             messageLabel.setText("Nesipravno korisničko ime.");
             System.out.println(e.getMessage());
         }
-
-
     }
-
 }

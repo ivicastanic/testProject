@@ -14,6 +14,7 @@
         <class>com.imconsalting.projekat.employee.Employee</class>
         <class>com.imconsalting.projekat.customer.Customer</class>
         <class>com.imconsalting.projekat.action.Action</class>
+        <class>com.imconsalting.projekat.employee.privilege.Privilege</class>
 
         <!-- Converters -->
 

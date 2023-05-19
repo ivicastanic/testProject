@@ -7,10 +7,16 @@ import com.imconsalting.projekat.customer.Customer;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+
+import com.imconsalting.projekat.employee.privilege.Privilege;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "employees", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
+        @NamedQuery(name = "Employee.findByUsername",query = "SELECT e FROM Employee e WHERE e.username = :username")
+})
 public class Employee implements Serializable {
     @Id
     @Column(name = "id")
@@ -34,6 +40,9 @@ public class Employee implements Serializable {
 
     @OneToMany(mappedBy = "employee")
     private List<Customer> customerList;
+    @JoinColumn(name = "id_privilege", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Privilege privilege;
 
     public Employee() {
     }
@@ -94,6 +103,14 @@ public class Employee implements Serializable {
         this.password = password;
     }
 
+    public Privilege getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(Privilege privilege) {
+        this.privilege = privilege;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,6 +130,7 @@ public class Employee implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
+                ", privilege=" + privilege.getName() +
                 '}';
     }
 }

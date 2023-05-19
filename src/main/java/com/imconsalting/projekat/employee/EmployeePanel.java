@@ -1,33 +1,46 @@
 package com.imconsalting.projekat.employee;
 
 
-import com.imconsalting.projekat.UI.AbstractScene;
+import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.UI.paneli.StartPanel;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import com.imconsalting.projekat.employee.privilege.Privilege;
+import jakarta.persistence.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class EmployeePanel extends VBox {
-
+    private final Label currentEmployeeLabel=new Label();
     private final Button backButton = new Button("Back");
     private TableView<Employee> employeeTableView = new TableView<>();
     private EmployeeController employeeController = new EmployeeController();
     private final TextField nameTextField = new TextField();
-    private final Label nameLabel = new Label("Name: ");
+    private final Label nameLabel = new Label("Ime: ");
     private final TextField surnameTextField = new TextField();
-    private final Label surnameLabel = new Label("Surname: ");
-    private final Button buttonAddEmployee = new Button("Add Employee");
-    private final Button buttonDeleteEmployee = new Button("Delete Employee");
+    private final Label surnameLabel = new Label("Prezime: ");
+    private final TextField usernameTextField = new TextField();
+    private final Label usernameLabel = new Label("Korisničko ime: ");
+    private final PasswordField passwordField = new PasswordField();
+    private final Label passwordLabel = new Label("Lozinka: ");
+    private final RadioButton adminRadioButton=new RadioButton("Admin");
+    private final RadioButton userRadioButton=new RadioButton("User");
+    private final Button addEmployeeButton = new Button("Add Employee");
+    private final Button deleteEmployeeButton = new Button("Delete Employee");
 
     public EmployeePanel() {
         setSpacing(10);
         setPadding(new Insets(10));
+
+        currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
+        HBox hBox=new HBox();
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(backButton,currentEmployeeLabel);
 
         //TABELA
         ObservableList<Employee> employeeObservableList = employeeController.loadEmployee();
@@ -45,22 +58,54 @@ public class EmployeePanel extends VBox {
         surnameColumn.setMinWidth(200);
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
 
-        employeeTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn);
+        TableColumn<Employee,String> privilegeColumn = new TableColumn<>("Privilegija");
+        privilegeColumn.setMinWidth(200);
+        privilegeColumn.setCellValueFactory(new PropertyValueFactory<>("privilege"));
 
+        employeeTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn,privilegeColumn);
 
-        //UNOS TEXT FIELDA
-        nameTextField.setPromptText("Name...");
-        nameTextField.setMaxWidth(200);
-        surnameTextField.setPromptText("Surname...");
-        surnameTextField.setMaxWidth(200);
 
         //BUTTONs
+        HBox hBox2=new HBox(10);
+        hBox2.getChildren().addAll(addEmployeeButton,deleteEmployeeButton);
         backButton.setOnAction(this::onClickBackButton);
-        buttonAddEmployee.setOnAction(this::onClickAddEmployeeButton);
-        buttonDeleteEmployee.setOnAction(this::onClickDeleteEmployeeButton);
+        addEmployeeButton.setOnAction(this::onClickAddEmployeeButton);
+        deleteEmployeeButton.setOnAction(this::onClickDeleteEmployeeButton);
 
-        getChildren().addAll(backButton, employeeTableView, nameLabel, nameTextField, surnameLabel, surnameTextField, buttonAddEmployee, buttonDeleteEmployee);
+        //UNOS TEXT FIELDA
+        nameTextField.setPromptText("Enter name...");
+        nameTextField.setMaxWidth(200);
+        surnameTextField.setPromptText("Enter surname...");
+        surnameTextField.setMaxWidth(200);
+        usernameTextField.setPromptText("Enter username...");
+        usernameTextField.setMaxWidth(200);
+        passwordField.setPromptText("Enter password...");
+        passwordField.setMaxWidth(200);
+        GridPane gridPane=new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(nameLabel,0,0);
+        gridPane.add(nameTextField,0,1);
+        gridPane.add(surnameLabel,1,0);
+        gridPane.add(surnameTextField,1,1);
+        gridPane.add(usernameLabel,2,0);
+        gridPane.add(usernameTextField,2,1);
+        gridPane.add(passwordLabel,3,0);
+        gridPane.add(passwordField,3,1);
 
+        //RADIO BUTTON
+        adminRadioButton.setSelected(false);
+        userRadioButton.setSelected(true);
+        ToggleGroup toggleGroup=new ToggleGroup();
+        adminRadioButton.setToggleGroup(toggleGroup);
+        userRadioButton.setToggleGroup(toggleGroup);
+        HBox hBox1=new HBox(10);
+        hBox1.getChildren().addAll(adminRadioButton,userRadioButton);
+
+        getChildren().addAll(hBox, employeeTableView);
+        if(Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")){
+            getChildren().addAll(hBox2, gridPane,hBox1);
+        }
     }
 
     private void onClickDeleteEmployeeButton(ActionEvent actionEvent) {
@@ -76,7 +121,7 @@ public class EmployeePanel extends VBox {
             ObservableList<Employee> employeeObservableList = employeeTableView.getItems();
             employeeObservableList.remove(selectedEmployee);
 
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("projectPU");
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             entityManager.getTransaction().begin();
             Employee employee = entityManager.find(Employee.class, selectedEmployee.getId());
@@ -88,11 +133,13 @@ public class EmployeePanel extends VBox {
 
     private void onClickBackButton(ActionEvent actionEvent) {
         StartPanel startPanel = new StartPanel();
-        AbstractScene.setScene(startPanel);
+        Scene scene=new Scene(startPanel);
+        Controller.instance().getMainStage().setScene(scene);
+        Controller.instance().getMainStage().setTitle("Pocetna");
     }
 
     private void onClickAddEmployeeButton(ActionEvent actionEvent) {
-        if (nameTextField.getText().isEmpty() || surnameTextField.getText().isEmpty()) {
+        if (nameTextField.getText().isEmpty() || surnameTextField.getText().isEmpty() || usernameTextField.getText().isEmpty() || passwordField.getText().isBlank()) {
             Dialog dialog = new Dialog<>();
             dialog.setTitle("Greška");
             dialog.setContentText("Neispravan unos!");
@@ -100,12 +147,42 @@ public class EmployeePanel extends VBox {
             dialog.setHeight(150);
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         } else {
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("projectPU");
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+            try{
+                Query query=entityManager.createNamedQuery("Employee.findByUsername");
+                query.setParameter("username",usernameTextField.getText());
+                if(query.getSingleResult()!=null){
+                    Dialog dialog = new Dialog<>();
+                    dialog.setTitle("Greška");
+                    dialog.setContentText("Korisničko ime je zauzeto!");
+                    dialog.show();
+                    dialog.setHeight(150);
+                    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                    nameTextField.setText("");
+                    surnameTextField.setText("");
+                    usernameTextField.setText("");
+                    passwordField.setText("");
+                    return;
+                }
+            }catch (NoResultException e){
+
+            }
+
 
             Employee employee = new Employee();
             employee.setName(nameTextField.getText());
             employee.setSurname(surnameTextField.getText());
+            employee.setUsername(usernameTextField.getText());
+            employee.setPassword(passwordField.getText());
+            if(adminRadioButton.isSelected()){
+                Privilege privilege=entityManager.find(Privilege.class,1);
+                employee.setPrivilege(privilege);
+            }else{
+                Privilege privilege=entityManager.find(Privilege.class,2);
+                employee.setPrivilege(privilege);
+            }
 
             entityManager.getTransaction().begin();
             entityManager.persist(employee);
@@ -116,6 +193,8 @@ public class EmployeePanel extends VBox {
         }
         nameTextField.setText("");
         surnameTextField.setText("");
+        usernameTextField.setText("");
+        passwordField.setText("");
     }
 
 }

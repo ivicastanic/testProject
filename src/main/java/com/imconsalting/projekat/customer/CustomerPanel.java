@@ -1,6 +1,6 @@
 package com.imconsalting.projekat.customer;
 
-import com.imconsalting.projekat.UI.AbstractScene;
+import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.UI.paneli.StartPanel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -8,6 +8,7 @@ import jakarta.persistence.Persistence;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
@@ -99,7 +100,7 @@ public class CustomerPanel extends VBox {
             ObservableList<Customer> employeeObservableList = customerTableView.getItems();
             employeeObservableList.remove(selectedCustomer);
 
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("projectPU");
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             entityManager.getTransaction().begin();
             Customer customer = entityManager.find(Customer.class, selectedCustomer.getId());
@@ -111,7 +112,9 @@ public class CustomerPanel extends VBox {
 
     private void onClickBackButton(ActionEvent actionEvent) {
         StartPanel startPanel = new StartPanel();
-        AbstractScene.setScene(startPanel);
+        Scene scene=new Scene(startPanel);
+        Controller.instance().getMainStage().setScene(scene);
+        Controller.instance().getMainStage().setTitle("Pocetna");
     }
 
     private void onClickAddCustomerButton(ActionEvent actionEvent) {
@@ -123,7 +126,7 @@ public class CustomerPanel extends VBox {
             dialog.setHeight(150);
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         } else {
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("projectPU");
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
 
             Customer customer = new Customer();
