@@ -149,7 +149,6 @@ public class EmployeePanel extends VBox {
         } else {
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
-
             try{
                 Query query=entityManager.createNamedQuery("Employee.findByUsername");
                 query.setParameter("username",usernameTextField.getText());
@@ -166,10 +165,20 @@ public class EmployeePanel extends VBox {
                     passwordField.setText("");
                     return;
                 }
-            }catch (NoResultException e){
-                
+            }catch (NoResultException e){}
+            if(passwordField.getText().length()<6){
+                Dialog dialog = new Dialog<>();
+                dialog.setTitle("Greška");
+                dialog.setContentText("Lozinka je prekratka (minimalno 6 karaktera)!");
+                dialog.show();
+                dialog.setHeight(150);
+                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                nameTextField.setText("");
+                surnameTextField.setText("");
+                usernameTextField.setText("");
+                passwordField.setText("");
+                return;
             }
-
 
             Employee employee = new Employee();
             employee.setName(nameTextField.getText());
