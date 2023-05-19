@@ -25,8 +25,8 @@ public class CustomerPanel extends VBox {
     private final Label nameLabel = new Label("Name: ");
     private final TextField surnameTextField = new TextField();
     private final Label surnameLabel = new Label("Surname: ");
-    private final Button buttonAddCustomer = new Button("Add Customer");
-    private final Button buttonDeleteCustomer = new Button("Delete Customer");
+    private final Button addCustomerButton = new Button("Add Customer");
+    private final Button deleteCustomerButton = new Button("Delete Customer");
 
     public CustomerPanel() {
         setSpacing(10);
@@ -80,10 +80,10 @@ public class CustomerPanel extends VBox {
 
         //BUTTONs
         backButton.setOnAction(this::onClickBackButton);
-        buttonAddCustomer.setOnAction(this::onClickAddCustomerButton);
-        buttonDeleteCustomer.setOnAction(this::onClickDeleteCustomerButton);
+        addCustomerButton.setOnAction(this::onClickAddCustomerButton);
+        deleteCustomerButton.setOnAction(this::onClickDeleteCustomerButton);
 
-        getChildren().addAll(backButton, customerTableView, nameLabel, nameTextField, surnameLabel, surnameTextField, buttonAddCustomer, buttonDeleteCustomer);
+        getChildren().addAll(backButton, customerTableView, nameLabel, nameTextField, surnameLabel, surnameTextField, addCustomerButton, deleteCustomerButton);
 
     }
 
