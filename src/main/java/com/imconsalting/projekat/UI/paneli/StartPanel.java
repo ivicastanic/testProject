@@ -30,11 +30,12 @@ public class StartPanel extends VBox {
     private final Image image=new Image("firma.png");
 
     public StartPanel(){
-        setSpacing(0);
+        setSpacing(10);
         setPadding(new Insets(10));
 
+        dateLabel.setText(returnDate());
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
-        BorderPane borderPane1=new BorderPane(null,null,currentEmployeeLabel,null,null);
+        BorderPane borderPane1=new BorderPane(null,null,currentEmployeeLabel,null,dateLabel);
 
         BorderPane borderPane=new BorderPane(welcomeLabel);
         welcomeLabel.setFont(new Font("Arial",20));
@@ -44,25 +45,23 @@ public class StartPanel extends VBox {
         hBox.getChildren().addAll(customersButton, employeesButton, logoutButton);
         BorderPane borderPane2=new BorderPane(hBox);
 
-        HBox hBox1=new HBox(10);
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(150);
         imageView.setFitWidth(150);
-        hBox1.getChildren().addAll(dateLabel,imageView);
+        BorderPane borderPane3=new BorderPane(imageView);
 
 
-        getChildren().addAll(borderPane1,borderPane,borderPane2,hBox1);
+        getChildren().addAll(borderPane1,borderPane,borderPane2,borderPane3);
 
 
-        dateLabel.setText(returnDate());
 
         logoutButton.setOnAction(this::onClickLogoutButton);
         customersButton.setOnAction(this::onClickCustomerButton);
         employeesButton.setOnAction(this::onClickEmployeeButton);
 
-        Image middleImage=new Image("middle.gif");
-        ImageView imageView1 = new ImageView(middleImage);
-        customersButton.setGraphic(imageView1);
+        //Image middleImage=new Image("middle.gif");
+        //ImageView imageView1 = new ImageView(middleImage);
+        //customersButton.setGraphic(imageView1);
     }
 
     private void onClickCustomerButton(ActionEvent actionEvent) {
