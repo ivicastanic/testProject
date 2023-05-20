@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 
 public class CustomerPanel extends VBox {
 
+    private final Label currentEmployeeLabel=new Label();
     private final Button backButton = new Button("Back");
     private TableView<Customer> customerTableView = new TableView<>();
     private CustomerController customerController = new CustomerController();
@@ -31,6 +33,9 @@ public class CustomerPanel extends VBox {
     public CustomerPanel() {
         setSpacing(10);
         setPadding(new Insets(10));
+
+        currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
+        BorderPane borderPane=new BorderPane(null,null,currentEmployeeLabel,null,backButton);
 
         //TABELA
         ObservableList<Customer> customerObservableList = customerController.loadCustomers();
@@ -83,7 +88,7 @@ public class CustomerPanel extends VBox {
         addCustomerButton.setOnAction(this::onClickAddCustomerButton);
         deleteCustomerButton.setOnAction(this::onClickDeleteCustomerButton);
 
-        getChildren().addAll(backButton, customerTableView, nameLabel, nameTextField, surnameLabel, surnameTextField, addCustomerButton, deleteCustomerButton);
+        getChildren().addAll(borderPane, customerTableView, nameLabel, nameTextField, surnameLabel, surnameTextField, addCustomerButton, deleteCustomerButton);
 
     }
 

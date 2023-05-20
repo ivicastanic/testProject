@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -32,15 +33,14 @@ public class EmployeePanel extends VBox {
     private final RadioButton userRadioButton=new RadioButton("User");
     private final Button addEmployeeButton = new Button("Add Employee");
     private final Button deleteEmployeeButton = new Button("Delete Employee");
+    private final CheckBox deleteCheckBox =new CheckBox("Delete");
 
     public EmployeePanel() {
         setSpacing(10);
         setPadding(new Insets(10));
 
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
-        HBox hBox=new HBox();
-        hBox.setSpacing(10);
-        hBox.getChildren().addAll(backButton,currentEmployeeLabel);
+        BorderPane borderPane=new BorderPane(null,null,currentEmployeeLabel,null,backButton);
 
         //TABELA
         ObservableList<Employee> employeeObservableList = employeeController.loadEmployee();
@@ -67,10 +67,13 @@ public class EmployeePanel extends VBox {
 
         //BUTTONs
         HBox hBox2=new HBox(10);
-        hBox2.getChildren().addAll(addEmployeeButton,deleteEmployeeButton);
+        hBox2.getChildren().addAll(addEmployeeButton,deleteEmployeeButton,deleteCheckBox);
         backButton.setOnAction(this::onClickBackButton);
         addEmployeeButton.setOnAction(this::onClickAddEmployeeButton);
         deleteEmployeeButton.setOnAction(this::onClickDeleteEmployeeButton);
+        deleteEmployeeButton.setDisable(true);
+        deleteCheckBox.setOnAction(this::onClickDeleteCheckBox);
+
 
         //UNOS TEXT FIELDA
         nameTextField.setPromptText("Enter name...");
@@ -102,9 +105,17 @@ public class EmployeePanel extends VBox {
         HBox hBox1=new HBox(10);
         hBox1.getChildren().addAll(adminRadioButton,userRadioButton);
 
-        getChildren().addAll(hBox, employeeTableView);
+        getChildren().addAll(borderPane, employeeTableView);
         if(Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")){
             getChildren().addAll(hBox2, gridPane,hBox1);
+        }
+    }
+
+    private  void onClickDeleteCheckBox(ActionEvent actionEvent){
+        if(deleteCheckBox.isSelected()){
+            deleteEmployeeButton.setDisable(false);
+        }else{
+            deleteEmployeeButton.setDisable(true);
         }
     }
 
@@ -142,7 +153,7 @@ public class EmployeePanel extends VBox {
         if (nameTextField.getText().isEmpty() || surnameTextField.getText().isEmpty() || usernameTextField.getText().isEmpty() || passwordField.getText().isBlank()) {
             Dialog dialog = new Dialog<>();
             dialog.setTitle("Greška");
-            dialog.setContentText("Neispravan unos!");
+            dialog.setContentText("Niste popunili sva polja!");
             dialog.show();
             dialog.setHeight(150);
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);

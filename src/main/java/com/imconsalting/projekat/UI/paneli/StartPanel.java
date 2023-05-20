@@ -16,6 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+
 import java.time.LocalDate;
 
 public class StartPanel extends VBox {
@@ -28,19 +30,19 @@ public class StartPanel extends VBox {
     private final Image image=new Image("firma.png");
 
     public StartPanel(){
-        setSpacing(20);
+        setSpacing(0);
         setPadding(new Insets(10));
-        setAlignment(Pos.CENTER);
 
-        GridPane gridPane=new GridPane();
-        gridPane.setAlignment(Pos.TOP_RIGHT);
-        gridPane.getChildren().add(currentEmployeeLabel);
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
+        BorderPane borderPane1=new BorderPane(null,null,currentEmployeeLabel,null,null);
 
         BorderPane borderPane=new BorderPane(welcomeLabel);
+        welcomeLabel.setFont(new Font("Arial",20));
+        borderPane.setPadding(new Insets(20));
 
         HBox hBox=new HBox(10);
         hBox.getChildren().addAll(customersButton, employeesButton, logoutButton);
+        BorderPane borderPane2=new BorderPane(hBox);
 
         HBox hBox1=new HBox(10);
         ImageView imageView = new ImageView(image);
@@ -49,7 +51,7 @@ public class StartPanel extends VBox {
         hBox1.getChildren().addAll(dateLabel,imageView);
 
 
-        getChildren().addAll(gridPane,borderPane,hBox,hBox1);
+        getChildren().addAll(borderPane1,borderPane,borderPane2,hBox1);
 
 
         dateLabel.setText(returnDate());
