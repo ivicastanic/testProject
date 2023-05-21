@@ -15,11 +15,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class EmployeePanel extends VBox {
-    private final Label currentEmployeeLabel=new Label();
+    private final Label currentEmployeeLabel = new Label();
     private final Button backButton = new Button("Back");
-    private TableView<Employee> employeeTableView = new TableView<>();
+    private final TableView<Employee> employeeTableView = new TableView<>();
     private EmployeeController employeeController = new EmployeeController();
     private final TextField nameTextField = new TextField();
     private final Label nameLabel = new Label("Ime: ");
@@ -29,18 +30,19 @@ public class EmployeePanel extends VBox {
     private final Label usernameLabel = new Label("Korisničko ime: ");
     private final PasswordField passwordField = new PasswordField();
     private final Label passwordLabel = new Label("Lozinka: ");
-    private final RadioButton adminRadioButton=new RadioButton("Admin");
-    private final RadioButton userRadioButton=new RadioButton("User");
+    private final RadioButton adminRadioButton = new RadioButton("Admin");
+    private final RadioButton userRadioButton = new RadioButton("User");
     private final Button addEmployeeButton = new Button("Add Employee");
+    private final Button editEmployeeButton = new Button("Edit Employee");
     private final Button deleteEmployeeButton = new Button("Delete Employee");
-    private final CheckBox deleteCheckBox =new CheckBox("Delete");
+    private final CheckBox deleteCheckBox = new CheckBox("Delete");
 
     public EmployeePanel() {
         setSpacing(10);
         setPadding(new Insets(10));
 
-        currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
-        BorderPane borderPane=new BorderPane(null,null,currentEmployeeLabel,null,backButton);
+        currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName() + ", " + Controller.getCurrentEmployee().getSurname());
+        BorderPane borderPane = new BorderPane(null, null, currentEmployeeLabel, null, backButton);
 
         //TABELA
         ObservableList<Employee> employeeObservableList = employeeController.loadEmployee();
@@ -58,18 +60,19 @@ public class EmployeePanel extends VBox {
         surnameColumn.setMinWidth(200);
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
 
-        TableColumn<Employee,String> privilegeColumn = new TableColumn<>("Privilegija");
+        TableColumn<Employee, String> privilegeColumn = new TableColumn<>("Privilegija");
         privilegeColumn.setMinWidth(200);
         privilegeColumn.setCellValueFactory(new PropertyValueFactory<>("privilege"));
 
-        employeeTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn,privilegeColumn);
+        employeeTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn, privilegeColumn);
 
 
         //BUTTONs
-        HBox hBox2=new HBox(10);
-        hBox2.getChildren().addAll(addEmployeeButton,deleteEmployeeButton,deleteCheckBox);
+        HBox hBox2 = new HBox(10);
+        hBox2.getChildren().addAll(addEmployeeButton, editEmployeeButton, deleteEmployeeButton, deleteCheckBox);
         backButton.setOnAction(this::onClickBackButton);
         addEmployeeButton.setOnAction(this::onClickAddEmployeeButton);
+        editEmployeeButton.setOnAction(this::onCLickEditButton);
         deleteEmployeeButton.setOnAction(this::onClickDeleteEmployeeButton);
         deleteEmployeeButton.setDisable(true);
         deleteCheckBox.setOnAction(this::onClickDeleteCheckBox);
@@ -84,37 +87,56 @@ public class EmployeePanel extends VBox {
         usernameTextField.setMaxWidth(200);
         passwordField.setPromptText("Enter password...");
         passwordField.setMaxWidth(200);
-        GridPane gridPane=new GridPane();
+        GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.add(nameLabel,0,0);
-        gridPane.add(nameTextField,0,1);
-        gridPane.add(surnameLabel,1,0);
-        gridPane.add(surnameTextField,1,1);
-        gridPane.add(usernameLabel,2,0);
-        gridPane.add(usernameTextField,2,1);
-        gridPane.add(passwordLabel,3,0);
-        gridPane.add(passwordField,3,1);
+        gridPane.add(nameLabel, 0, 0);
+        gridPane.add(nameTextField, 0, 1);
+        gridPane.add(surnameLabel, 1, 0);
+        gridPane.add(surnameTextField, 1, 1);
+        gridPane.add(usernameLabel, 2, 0);
+        gridPane.add(usernameTextField, 2, 1);
+        gridPane.add(passwordLabel, 3, 0);
+        gridPane.add(passwordField, 3, 1);
 
         //RADIO BUTTON
         adminRadioButton.setSelected(false);
         userRadioButton.setSelected(true);
-        ToggleGroup toggleGroup=new ToggleGroup();
+        ToggleGroup toggleGroup = new ToggleGroup();
         adminRadioButton.setToggleGroup(toggleGroup);
         userRadioButton.setToggleGroup(toggleGroup);
-        HBox hBox1=new HBox(10);
-        hBox1.getChildren().addAll(adminRadioButton,userRadioButton);
+        HBox hBox1 = new HBox(10);
+        hBox1.getChildren().addAll(adminRadioButton, userRadioButton);
 
         getChildren().addAll(borderPane, employeeTableView);
-        if(Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")){
-            getChildren().addAll(hBox2, gridPane,hBox1);
+        if (Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")) {
+            getChildren().addAll(hBox2, gridPane, hBox1);
         }
     }
 
-    private  void onClickDeleteCheckBox(ActionEvent actionEvent){
-        if(deleteCheckBox.isSelected()){
+    private void onCLickEditButton(ActionEvent actionEvent) {
+        if (employeeTableView.getSelectionModel().getSelectedItem() == null) {
+            Dialog dialog = new Dialog<>();
+            dialog.setTitle("Greška");
+            dialog.setContentText("Selektujte zaposlenika kojeg želite editovati");
+            dialog.show();
+            dialog.setHeight(150);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+        } else {
+            Controller.setEditEmployee(employeeTableView.getSelectionModel().getSelectedItem());
+            Stage stage = new Stage();
+            stage.setTitle("Editovanje zaposlenika");
+            EmployeeEditPanel employeeEditPanel = new EmployeeEditPanel();
+            Scene scene = new Scene(employeeEditPanel);
+            stage.setScene(scene);
+            stage.show();
+        }
+    }
+
+    private void onClickDeleteCheckBox(ActionEvent actionEvent) {
+        if (deleteCheckBox.isSelected()) {
             deleteEmployeeButton.setDisable(false);
-        }else{
+        } else {
             deleteEmployeeButton.setDisable(true);
         }
     }
@@ -144,10 +166,11 @@ public class EmployeePanel extends VBox {
 
     private void onClickBackButton(ActionEvent actionEvent) {
         StartPanel startPanel = new StartPanel();
-        Scene scene=new Scene(startPanel);
+        Scene scene = new Scene(startPanel);
         Controller.instance().getMainStage().setScene(scene);
         Controller.instance().getMainStage().setTitle("Pocetna");
     }
+
 
     private void onClickAddEmployeeButton(ActionEvent actionEvent) {
         if (nameTextField.getText().isEmpty() || surnameTextField.getText().isEmpty() || usernameTextField.getText().isEmpty() || passwordField.getText().isBlank()) {
@@ -160,10 +183,10 @@ public class EmployeePanel extends VBox {
         } else {
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
             EntityManager entityManager = entityManagerFactory.createEntityManager();
-            try{
-                Query query=entityManager.createNamedQuery("Employee.findByUsername");
-                query.setParameter("username",usernameTextField.getText());
-                if(query.getSingleResult()!=null){
+            try {
+                Query query = entityManager.createNamedQuery("Employee.findByUsername");
+                query.setParameter("username", usernameTextField.getText());
+                if (query.getSingleResult() != null) {
                     Dialog dialog = new Dialog<>();
                     dialog.setTitle("Greška");
                     dialog.setContentText("Korisničko ime je zauzeto!");
@@ -176,8 +199,9 @@ public class EmployeePanel extends VBox {
                     passwordField.setText("");
                     return;
                 }
-            }catch (NoResultException e){}
-            if(passwordField.getText().length()<6){
+            } catch (NoResultException e) {
+            }
+            if (passwordField.getText().length() < 6) {
                 Dialog dialog = new Dialog<>();
                 dialog.setTitle("Greška");
                 dialog.setContentText("Lozinka je prekratka (minimalno 6 karaktera)!");
@@ -196,11 +220,11 @@ public class EmployeePanel extends VBox {
             employee.setSurname(surnameTextField.getText());
             employee.setUsername(usernameTextField.getText());
             employee.setPassword(passwordField.getText());
-            if(adminRadioButton.isSelected()){
-                Privilege privilege=entityManager.find(Privilege.class,1);
+            if (adminRadioButton.isSelected()) {
+                Privilege privilege = entityManager.find(Privilege.class, 1);
                 employee.setPrivilege(privilege);
-            }else{
-                Privilege privilege=entityManager.find(Privilege.class,2);
+            } else {
+                Privilege privilege = entityManager.find(Privilege.class, 2);
                 employee.setPrivilege(privilege);
             }
 

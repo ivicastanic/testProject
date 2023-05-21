@@ -1,5 +1,6 @@
 package com.imconsalting.projekat.employee;
 
+import com.imconsalting.projekat.UI.Controller;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -14,7 +15,7 @@ public class EmployeeController {
 
     public ObservableList<Employee> loadEmployee(){
         List<Employee> employees=new ArrayList<>();
-        EntityManagerFactory entityManagerFactory= Persistence.createEntityManagerFactory("projectPU");
+        EntityManagerFactory entityManagerFactory= Persistence.createEntityManagerFactory(Controller.PU_NAME);
         EntityManager entityManager=entityManagerFactory.createEntityManager();
 
         entityManager.getTransaction().begin();
