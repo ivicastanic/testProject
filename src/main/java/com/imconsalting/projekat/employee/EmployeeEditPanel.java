@@ -8,6 +8,7 @@ import jakarta.persistence.Persistence;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -94,5 +95,7 @@ public class EmployeeEditPanel extends GridPane {
         entityManager.merge(editEmployee);
         entityManager.getTransaction().commit();
 
+        Scene scene=new Scene(new EmployeePanel());
+        Controller.instance().getMainStage().setScene(scene);
     }
 }

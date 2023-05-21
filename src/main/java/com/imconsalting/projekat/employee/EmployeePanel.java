@@ -35,7 +35,7 @@ public class EmployeePanel extends VBox {
     private final Button addEmployeeButton = new Button("Add Employee");
     private final Button editEmployeeButton = new Button("Edit Employee");
     private final Button deleteEmployeeButton = new Button("Delete Employee");
-    private final CheckBox deleteCheckBox = new CheckBox("Delete");//
+    private final CheckBox deleteCheckBox = new CheckBox("Delete");
 
     public EmployeePanel() {
         setSpacing(10);
