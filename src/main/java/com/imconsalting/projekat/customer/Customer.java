@@ -51,7 +51,7 @@ public class Customer implements Serializable {
     private Profession profession;
 
     @JoinColumn(name = "id_company", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Company company;
 
     @JoinColumn(name = "id_employee", referencedColumnName = "id")
@@ -187,7 +187,8 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "Customer{" +
+        String string="";
+        String string1= "Customer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
@@ -196,10 +197,17 @@ public class Customer implements Serializable {
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", empStatus=" + empStatus.getName() +
-                ", profession=" + profession.getName() +
-                ", company=" + company.getName() +
-                ", employee=" + employee.getName() +
+                ", profession=" + profession.getName() ;
+        string+=string1;
+        if (company!=null){
+            String string2=", company=" + company.getName();
+            string+=string2;
+        }
+        String string3= ", employee=" + employee.getName() +
                 ", dateRegisty=" + dateRegisty +
                 '}';
+        string+=string3;
+        return string;
     }
+
 }

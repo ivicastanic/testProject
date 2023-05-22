@@ -9,7 +9,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "companies", catalog = "project") // companies je naziv tabele u bazi, project je ime baze
-//@NamedQueries({@NamedQuery(name = "upit", query = "SELECT c FROM Company c")})
+@NamedQueries(value = {
+        @NamedQuery(name = "Company.findAll", query = "SELECT c FROM Company c"),
+})
 public class Company implements Serializable {
 
     @Id
@@ -88,11 +90,6 @@ public class Company implements Serializable {
 
     @Override
     public String toString() {
-        return "Company{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", contact='" + contact + '\'' +
-                '}';
+        return name;
     }
 }

@@ -9,6 +9,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "emp_status", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "EmpStatus.findAll", query = "SELECT e FROM EmpStatus e"),
+})
 public class EmpStatus implements Serializable {
     @Id
     @Column(name = "id")
@@ -64,9 +67,6 @@ public class EmpStatus implements Serializable {
 
     @Override
     public String toString() {
-        return "EmpStatus{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 }

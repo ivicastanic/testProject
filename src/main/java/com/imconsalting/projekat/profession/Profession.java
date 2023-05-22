@@ -10,6 +10,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "profession", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "Profession.findAll", query = "SELECT p FROM Profession p"),
+})
 public class Profession implements Serializable {
     @Id
     @Column(name = "id")
@@ -64,9 +67,6 @@ public class Profession implements Serializable {
 
     @Override
     public String toString() {
-        return "Profession{" +
-                "id=" + id+
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 }

@@ -72,7 +72,7 @@ public class EmployeePanel extends VBox {
         hBox2.getChildren().addAll(addEmployeeButton, editEmployeeButton, deleteEmployeeButton, deleteCheckBox);
         backButton.setOnAction(this::onClickBackButton);
         addEmployeeButton.setOnAction(this::onClickAddEmployeeButton);
-        editEmployeeButton.setOnAction(this::onCLickEditButton);
+        editEmployeeButton.setOnAction(this::onCLickEditEmployeeButton);
         deleteEmployeeButton.setOnAction(this::onClickDeleteEmployeeButton);
         deleteEmployeeButton.setDisable(true);
         deleteCheckBox.setOnAction(this::onClickDeleteCheckBox);
@@ -114,7 +114,7 @@ public class EmployeePanel extends VBox {
         }
     }
 
-    private void onCLickEditButton(ActionEvent actionEvent) {
+    private void onCLickEditEmployeeButton(ActionEvent actionEvent) {
         if (employeeTableView.getSelectionModel().getSelectedItem() == null) {
             Dialog dialog = new Dialog<>();
             dialog.setTitle("Greška");

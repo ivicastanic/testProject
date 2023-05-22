@@ -1,7 +1,7 @@
 package com.imconsalting.projekat.UI;
 
+import com.imconsalting.projekat.customer.Customer;
 import com.imconsalting.projekat.employee.Employee;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Controller {
@@ -12,12 +12,20 @@ public class Controller {
 
     private static Employee currentEmployee; //trenutno logovani employee
     private static Employee editEmployee;
+    private static Customer editCustomer;
 
 
     private Controller(){
 
     }
 
+    public static Customer getEditCustomer() {
+        return editCustomer;
+    }
+
+    public static void setEditCustomer(Customer editCustomer) {
+        Controller.editCustomer = editCustomer;
+    }
 
     public static Employee getEditEmployee() {
         return editEmployee;

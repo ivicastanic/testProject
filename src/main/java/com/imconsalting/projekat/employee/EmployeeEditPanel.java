@@ -2,9 +2,7 @@ package com.imconsalting.projekat.employee;
 
 import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.employee.privilege.Privilege;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -23,18 +21,17 @@ public class EmployeeEditPanel extends GridPane {
     private final Label usernameLabel = new Label("Korisničko ime: ");
     private final PasswordField passwordField = new PasswordField();
     private final Label passwordLabel = new Label("Lozinka: ");
-    private final RadioButton adminRadioButton=new RadioButton("Admin");
-    private final RadioButton userRadioButton=new RadioButton("User");
-    private final Button saveEmployeeButton=new Button("SAVE");
+    private final RadioButton adminRadioButton = new RadioButton("Admin");
+    private final RadioButton userRadioButton = new RadioButton("User");
+    private final Button saveEmployeeButton = new Button("SAVE");
     private Employee employee;
 
-    public EmployeeEditPanel(){
+    public EmployeeEditPanel() {
         setHgap(10);
         setVgap(10);
         setPadding(new Insets(20));
 
-        employee= Controller.getEditEmployee();
-
+        employee = Controller.getEditEmployee();
 
 
         //forma za editovanje
@@ -46,56 +43,89 @@ public class EmployeeEditPanel extends GridPane {
         usernameTextField.setText(employee.getUsername());
         passwordField.setMaxWidth(200);
         passwordField.setText(employee.getPassword());
-        add(nameLabel,0,0);
-        add(nameTextField,1,0);
-        add(surnameLabel,0,1);
-        add(surnameTextField,1,1);
-        add(usernameLabel,0,2);
-        add(usernameTextField,1,2);
-        add(passwordLabel,0,3);
-        add(passwordField,1,3);
+        add(nameLabel, 0, 0);
+        add(nameTextField, 1, 0);
+        add(surnameLabel, 0, 1);
+        add(surnameTextField, 1, 1);
+        add(usernameLabel, 0, 2);
+        add(usernameTextField, 1, 2);
+        add(passwordLabel, 0, 3);
+        add(passwordField, 1, 3);
 
         //RADIO BUTTON
-        if(employee.getPrivilege().getName().equals("admin")){
+        if (employee.getPrivilege().getName().equals("admin")) {
             adminRadioButton.setSelected(true);
             userRadioButton.setSelected(false);
-        }else{
+        } else {
             adminRadioButton.setSelected(false);
             userRadioButton.setSelected(true);
         }
-        ToggleGroup toggleGroup=new ToggleGroup();
+        ToggleGroup toggleGroup = new ToggleGroup();
         adminRadioButton.setToggleGroup(toggleGroup);
         userRadioButton.setToggleGroup(toggleGroup);
-        HBox hBox1=new HBox(10);
-        hBox1.getChildren().addAll(adminRadioButton,userRadioButton);
-        add(hBox1,0,4);
+        HBox hBox1 = new HBox(10);
+        hBox1.getChildren().addAll(adminRadioButton, userRadioButton);
+        add(hBox1, 0, 4);
 
 
-        add(saveEmployeeButton,0,5);
+        add(saveEmployeeButton, 0, 5);
         saveEmployeeButton.setOnAction(this::onClickSaveEmployeeButton);
 
     }
 
     private void onClickSaveEmployeeButton(ActionEvent actionEvent) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        Employee editEmployee = entityManager.find(Employee.class, employee.getId());
-        editEmployee.setName(nameTextField.getText());
-        editEmployee.setSurname(surnameTextField.getText());
-        editEmployee.setUsername(usernameTextField.getText());
-        editEmployee.setPassword(passwordField.getText());
-        if (adminRadioButton.isSelected()) {
-            Privilege privilege = entityManager.find(Privilege.class, 1);
-            editEmployee.setPrivilege(privilege);
+        if (nameTextField.getText().isEmpty() || surnameTextField.getText().isEmpty() || usernameTextField.getText().isEmpty() || passwordField.getText().isBlank()) {
+            Dialog dialog = new Dialog<>();
+            dialog.setTitle("Greška");
+            dialog.setContentText("Niste popunili sva polja!");
+            dialog.show();
+            dialog.setHeight(150);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         } else {
-            Privilege privilege = entityManager.find(Privilege.class, 2);
-            editEmployee.setPrivilege(privilege);
-        }
-        entityManager.merge(editEmployee);
-        entityManager.getTransaction().commit();
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            try {
 
-        Scene scene=new Scene(new EmployeePanel());
-        Controller.instance().getMainStage().setScene(scene);
+                Query query = entityManager.createNamedQuery("Employee.findByUsername");
+                query.setParameter("username", usernameTextField.getText());
+                if (query.getSingleResult() != null && !employee.getUsername().equals(usernameTextField.getText())) {
+                    Dialog dialog = new Dialog<>();
+                    dialog.setTitle("Greška");
+                    dialog.setContentText("Korisničko ime je zauzeto!");
+                    dialog.show();
+                    dialog.setHeight(150);
+                    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                    return;
+                }
+            } catch (NoResultException e) {
+            }
+            if (passwordField.getText().length() < 6) {
+                Dialog dialog = new Dialog<>();
+                dialog.setTitle("Greška");
+                dialog.setContentText("Lozinka je prekratka (minimalno 6 karaktera)!");
+                dialog.show();
+                dialog.setHeight(150);
+                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                return;
+            }
+            entityManager.getTransaction().begin();
+            Employee editEmployee = entityManager.find(Employee.class, employee.getId());
+            editEmployee.setName(nameTextField.getText());
+            editEmployee.setSurname(surnameTextField.getText());
+            editEmployee.setUsername(usernameTextField.getText());
+            editEmployee.setPassword(passwordField.getText());
+            if (adminRadioButton.isSelected()) {
+                Privilege privilege = entityManager.find(Privilege.class, 1);
+                editEmployee.setPrivilege(privilege);
+            } else {
+                Privilege privilege = entityManager.find(Privilege.class, 2);
+                editEmployee.setPrivilege(privilege);
+            }
+            entityManager.merge(editEmployee);
+            entityManager.getTransaction().commit();
+
+            Scene scene = new Scene(new EmployeePanel());
+            Controller.instance().getMainStage().setScene(scene);
+        }
     }
 }
