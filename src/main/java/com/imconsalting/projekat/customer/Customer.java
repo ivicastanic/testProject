@@ -187,27 +187,7 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        String string="";
-        String string1= "Customer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", birthday=" + birthday +
-                ", address='" + address + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", email='" + email + '\'' +
-                ", empStatus=" + empStatus.getName() +
-                ", profession=" + profession.getName() ;
-        string+=string1;
-        if (company!=null){
-            String string2=", company=" + company.getName();
-            string+=string2;
-        }
-        String string3= ", employee=" + employee.getName() +
-                ", dateRegisty=" + dateRegisty +
-                '}';
-        string+=string3;
-        return string;
+        return name+", "+surname;
     }
 
 }

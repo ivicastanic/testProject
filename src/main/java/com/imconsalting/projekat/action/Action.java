@@ -13,6 +13,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "actions", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "Action.findAll", query = "SELECT a FROM Action a"),
+        @NamedQuery(name = "Action.findByEmployee", query = "SELECT a FROM Action a WHERE a.employee = :employee"),
+        @NamedQuery(name = "Action.findByCustomer", query = "SELECT a FROM Action a WHERE a.customer = :customer")
+})
 public class Action implements Serializable {
     @Id
     @Column(name = "id")
@@ -39,7 +44,6 @@ public class Action implements Serializable {
     @ManyToOne(optional = false)
     private Response response;
 
-    @Basic(optional = false)
     private String description;
 
     public Action() {

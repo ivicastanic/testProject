@@ -12,10 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import java.time.LocalDate;
@@ -35,24 +32,23 @@ public class StartPanel extends VBox {
 
         dateLabel.setText(returnDate());
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName()+", "+Controller.getCurrentEmployee().getSurname());
-        BorderPane borderPane1=new BorderPane(null,null,currentEmployeeLabel,null,dateLabel);
+        BorderPane dateAndEmployeePanel=new BorderPane(null,null,currentEmployeeLabel,null,dateLabel);
 
-        BorderPane borderPane=new BorderPane(welcomeLabel);
+        BorderPane welcomePanel=new BorderPane(welcomeLabel);
         welcomeLabel.setFont(new Font("Arial",20));
-        borderPane.setPadding(new Insets(20));
+        welcomePanel.setPadding(new Insets(20));
 
-        HBox hBox=new HBox(10);
-        hBox.getChildren().addAll(customersButton, employeesButton, logoutButton);
-        BorderPane borderPane2=new BorderPane(hBox);
+        FlowPane buttonPanel=new FlowPane();
+        buttonPanel.setHgap(10);
+        buttonPanel.setAlignment(Pos.CENTER);
+        buttonPanel.getChildren().addAll(customersButton,employeesButton,logoutButton);
 
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(150);
-        imageView.setFitWidth(150);
-        BorderPane borderPane3=new BorderPane(imageView);
+        imageView.setFitHeight(250);
+        imageView.setFitWidth(250);
+        BorderPane imagePanel=new BorderPane(imageView);
 
-
-        getChildren().addAll(borderPane1,borderPane,borderPane2,borderPane3);
-
+        getChildren().addAll(dateAndEmployeePanel,welcomePanel,buttonPanel,imagePanel);
 
 
         logoutButton.setOnAction(this::onClickLogoutButton);

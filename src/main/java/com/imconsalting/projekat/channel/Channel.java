@@ -9,6 +9,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "channels", catalog = "project")
+@NamedQueries(value = {
+        @NamedQuery(name = "Channel.findAll", query = "SELECT c FROM Channel c")
+})
 public class Channel implements Serializable {
     @Id
     @Column(name = "id")
@@ -64,9 +67,6 @@ public class Channel implements Serializable {
 
     @Override
     public String toString() {
-        return "Channel{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 }

@@ -61,6 +61,9 @@ public class CustomerEditPanel extends GridPane {
         emailTextField.setMaxWidth(200);
         emailTextField.setText(customer.getEmail());
         birthdayPicker.setValue(customer.getBirthday());
+        companyComboBox.setMaxWidth(200);
+        professionComboBox.setMaxWidth(200);
+        empStatusComboBox.setMaxWidth(200);
         //UNOS CHECK BOXA
         ObservableList<EmpStatus> empStatusObservableList = empStatusComboBox.getItems();
         ObservableList<Profession> professionObservableList=professionComboBox.getItems();

@@ -21,6 +21,7 @@ public class EmployeePanel extends VBox {
     private final Label currentEmployeeLabel = new Label();
     private final Button backButton = new Button("Back");
     private final TableView<Employee> employeeTableView = new TableView<>();
+    private ObservableList<Employee> employeeObservableList;
     private EmployeeController employeeController = new EmployeeController();
     private final TextField nameTextField = new TextField();
     private final Label nameLabel = new Label("Ime: ");
@@ -42,10 +43,21 @@ public class EmployeePanel extends VBox {
         setPadding(new Insets(10));
 
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName() + ", " + Controller.getCurrentEmployee().getSurname());
-        BorderPane borderPane = new BorderPane(null, null, currentEmployeeLabel, null, backButton);
+        BorderPane backButtonAndEmployeePanel = new BorderPane(null, null, currentEmployeeLabel, null, backButton);
 
-        //TABELA
-        ObservableList<Employee> employeeObservableList = employeeController.loadEmployee();
+        setupTableView();
+        HBox buttonPanel = setupButtonPanel();
+        GridPane textFieldPanel = setupTextFieldPanel();
+        HBox radioButtonPanel=setupRadioButtonPanel();
+
+        getChildren().addAll(backButtonAndEmployeePanel, employeeTableView);
+        if (Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")) {
+            getChildren().addAll(buttonPanel, textFieldPanel, radioButtonPanel);
+        }
+    }
+
+    private void setupTableView(){
+        employeeObservableList = employeeController.loadEmployee();
         employeeTableView.setItems(employeeObservableList);
 
         TableColumn<Employee, Integer> idColumn = new TableColumn<>("Id");
@@ -60,25 +72,27 @@ public class EmployeePanel extends VBox {
         surnameColumn.setMinWidth(200);
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
 
-        TableColumn<Employee, String> privilegeColumn = new TableColumn<>("Privilegija");
+        TableColumn<Employee, Privilege> privilegeColumn = new TableColumn<>("Privilegija");
         privilegeColumn.setMinWidth(200);
         privilegeColumn.setCellValueFactory(new PropertyValueFactory<>("privilege"));
 
         employeeTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn, privilegeColumn);
+    }
 
-
-        //BUTTONs
-        HBox hBox2 = new HBox(10);
-        hBox2.getChildren().addAll(addEmployeeButton, editEmployeeButton, deleteEmployeeButton, deleteCheckBox);
+    private HBox setupButtonPanel(){
+        HBox hBox = new HBox(10);
+        hBox.getChildren().addAll(addEmployeeButton, editEmployeeButton, deleteEmployeeButton, deleteCheckBox);
         backButton.setOnAction(this::onClickBackButton);
         addEmployeeButton.setOnAction(this::onClickAddEmployeeButton);
         editEmployeeButton.setOnAction(this::onCLickEditEmployeeButton);
         deleteEmployeeButton.setOnAction(this::onClickDeleteEmployeeButton);
         deleteEmployeeButton.setDisable(true);
         deleteCheckBox.setOnAction(this::onClickDeleteCheckBox);
+        return hBox;
+    }
 
-
-        //UNOS TEXT FIELDA
+    private GridPane setupTextFieldPanel(){
+        GridPane gridPane=new GridPane();
         nameTextField.setPromptText("Enter name...");
         nameTextField.setMaxWidth(200);
         surnameTextField.setPromptText("Enter surname...");
@@ -87,7 +101,6 @@ public class EmployeePanel extends VBox {
         usernameTextField.setMaxWidth(200);
         passwordField.setPromptText("Enter password...");
         passwordField.setMaxWidth(200);
-        GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.add(nameLabel, 0, 0);
@@ -98,20 +111,18 @@ public class EmployeePanel extends VBox {
         gridPane.add(usernameTextField, 2, 1);
         gridPane.add(passwordLabel, 3, 0);
         gridPane.add(passwordField, 3, 1);
+        return gridPane;
+    }
 
-        //RADIO BUTTON
+    private HBox setupRadioButtonPanel(){
         adminRadioButton.setSelected(false);
         userRadioButton.setSelected(true);
         ToggleGroup toggleGroup = new ToggleGroup();
         adminRadioButton.setToggleGroup(toggleGroup);
         userRadioButton.setToggleGroup(toggleGroup);
-        HBox hBox1 = new HBox(10);
-        hBox1.getChildren().addAll(adminRadioButton, userRadioButton);
-
-        getChildren().addAll(borderPane, employeeTableView);
-        if (Controller.getCurrentEmployee().getPrivilege().getName().equals("admin")) {
-            getChildren().addAll(hBox2, gridPane, hBox1);
-        }
+        HBox hBox = new HBox(10);
+        hBox.getChildren().addAll(adminRadioButton, userRadioButton);
+        return hBox;
     }
 
     private void onCLickEditEmployeeButton(ActionEvent actionEvent) {
@@ -151,7 +162,6 @@ public class EmployeePanel extends VBox {
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         } else {
             Employee selectedEmployee = employeeTableView.getSelectionModel().getSelectedItem();
-            ObservableList<Employee> employeeObservableList = employeeTableView.getItems();
             employeeObservableList.remove(selectedEmployee);
 
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
@@ -193,52 +203,43 @@ public class EmployeePanel extends VBox {
                     dialog.show();
                     dialog.setHeight(150);
                     dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-                    nameTextField.setText("");
-                    surnameTextField.setText("");
-                    usernameTextField.setText("");
-                    passwordField.setText("");
-                    return;
                 }
             } catch (NoResultException e) {
+                if (passwordField.getText().length() < 6) {
+                    Dialog dialog = new Dialog<>();
+                    dialog.setTitle("Greška");
+                    dialog.setContentText("Lozinka je prekratka (minimalno 6 karaktera)!");
+                    dialog.show();
+                    dialog.setHeight(150);
+                    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                }else{
+                    Employee employee = new Employee();
+                    employee.setName(nameTextField.getText());
+                    employee.setSurname(surnameTextField.getText());
+                    employee.setUsername(usernameTextField.getText());
+                    employee.setPassword(passwordField.getText());
+                    if (adminRadioButton.isSelected()) {
+                        Privilege privilege = entityManager.find(Privilege.class, 1);
+                        employee.setPrivilege(privilege);
+                    } else {
+                        Privilege privilege = entityManager.find(Privilege.class, 2);
+                        employee.setPrivilege(privilege);
+                    }
+                    entityManager.getTransaction().begin();
+                    entityManager.persist(employee);
+                    entityManager.getTransaction().commit();
+                    employeeObservableList.add(employee);
+                }
             }
-            if (passwordField.getText().length() < 6) {
-                Dialog dialog = new Dialog<>();
-                dialog.setTitle("Greška");
-                dialog.setContentText("Lozinka je prekratka (minimalno 6 karaktera)!");
-                dialog.show();
-                dialog.setHeight(150);
-                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-                nameTextField.setText("");
-                surnameTextField.setText("");
-                usernameTextField.setText("");
-                passwordField.setText("");
-                return;
-            }
-
-            Employee employee = new Employee();
-            employee.setName(nameTextField.getText());
-            employee.setSurname(surnameTextField.getText());
-            employee.setUsername(usernameTextField.getText());
-            employee.setPassword(passwordField.getText());
-            if (adminRadioButton.isSelected()) {
-                Privilege privilege = entityManager.find(Privilege.class, 1);
-                employee.setPrivilege(privilege);
-            } else {
-                Privilege privilege = entityManager.find(Privilege.class, 2);
-                employee.setPrivilege(privilege);
-            }
-
-            entityManager.getTransaction().begin();
-            entityManager.persist(employee);
-            entityManager.getTransaction().commit();
-
-            ObservableList<Employee> employeeObservableList = employeeTableView.getItems();
-            employeeObservableList.add(employee);
         }
-        nameTextField.setText("");
-        surnameTextField.setText("");
-        usernameTextField.setText("");
-        passwordField.setText("");
+        clearTextField();
+    }
+
+    private void clearTextField(){
+        nameTextField.clear();
+        surnameTextField.clear();
+        usernameTextField.clear();
+        passwordField.clear();
     }
 
 }

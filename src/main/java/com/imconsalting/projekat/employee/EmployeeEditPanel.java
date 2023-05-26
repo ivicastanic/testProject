@@ -63,9 +63,9 @@ public class EmployeeEditPanel extends GridPane {
         ToggleGroup toggleGroup = new ToggleGroup();
         adminRadioButton.setToggleGroup(toggleGroup);
         userRadioButton.setToggleGroup(toggleGroup);
-        HBox hBox1 = new HBox(10);
-        hBox1.getChildren().addAll(adminRadioButton, userRadioButton);
-        add(hBox1, 0, 4);
+        HBox radioButtonPanel = new HBox(10);
+        radioButtonPanel.getChildren().addAll(adminRadioButton, userRadioButton);
+        add(radioButtonPanel, 0, 4);
 
 
         add(saveEmployeeButton, 0, 5);

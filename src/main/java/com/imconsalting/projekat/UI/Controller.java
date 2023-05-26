@@ -13,10 +13,19 @@ public class Controller {
     private static Employee currentEmployee; //trenutno logovani employee
     private static Employee editEmployee;
     private static Customer editCustomer;
+    private static Customer selctedCustomer;
 
 
     private Controller(){
 
+    }
+
+    public static Customer getSelctedCustomer() {
+        return selctedCustomer;
+    }
+
+    public static void setSelctedCustomer(Customer selctedCustomer) {
+        Controller.selctedCustomer = selctedCustomer;
     }
 
     public static Customer getEditCustomer() {

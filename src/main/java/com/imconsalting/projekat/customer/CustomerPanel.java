@@ -2,12 +2,17 @@ package com.imconsalting.projekat.customer;
 
 import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.UI.paneli.StartPanel;
+import com.imconsalting.projekat.action.Action;
+import com.imconsalting.projekat.action.ActionCustomerPanel;
+import com.imconsalting.projekat.action.ActionEmployeePanel;
+import com.imconsalting.projekat.channel.Channel;
 import com.imconsalting.projekat.company.Company;
 import com.imconsalting.projekat.employee.Employee;
 import com.imconsalting.projekat.employee.EmployeeEditPanel;
 import com.imconsalting.projekat.employee.privilege.Privilege;
 import com.imconsalting.projekat.empstatus.EmpStatus;
 import com.imconsalting.projekat.profession.Profession;
+import com.imconsalting.projekat.response.Response;
 import jakarta.persistence.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -64,64 +69,59 @@ public class CustomerPanel extends VBox {
         setPadding(new Insets(10));
 
         currentEmployeeLabel.setText(Controller.getCurrentEmployee().getName() + ", " + Controller.getCurrentEmployee().getSurname());
-        BorderPane borderPane = new BorderPane(null, null, currentEmployeeLabel, null, backButton);
+        BorderPane backButtonAndEmployeePanel = new BorderPane(null, null, currentEmployeeLabel, null, backButton);
 
-        //TABELA
+        setupTableView();
+        BorderPane buttonBorderPane = setupButtonPanel();
+        GridPane textFieldPanel=setupTextFieldPanel();
+
+        getChildren().addAll(backButtonAndEmployeePanel, customerTableView, buttonBorderPane, textFieldPanel);
+    }
+
+    private void setupTableView(){
         ObservableList<Customer> customerObservableList = customerController.loadCustomers();
         customerTableView.setItems(customerObservableList);
 
         TableColumn<Customer, Integer> idColumn = new TableColumn<>("Id");
-        //idColumn.setMinWidth(100);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<Customer, String> nameColumn = new TableColumn<>("Ime");
-        //nameColumn.setMinWidth(200);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn<Customer, String> surnameColumn = new TableColumn<>("Prezime");
-        //surnameColumn.setMinWidth(200);
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
 
         TableColumn<Customer, LocalDate> birthdayColumn = new TableColumn<>("Datum rođenja");
-        //birthdayColumn.setMinWidth(200);
         birthdayColumn.setCellValueFactory(new PropertyValueFactory<>("birthday"));
 
         TableColumn<Customer, String> addressColumn = new TableColumn<>("Adresa");
-        //addressColumn.setMinWidth(200);
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
         TableColumn<Customer, String> mobileColumn = new TableColumn<>("Mobitel");
-        //mobileColumn.setMinWidth(200);
         mobileColumn.setCellValueFactory(new PropertyValueFactory<>("mobile"));
 
         TableColumn<Customer, String> emailColumn = new TableColumn<>("Email");
-        //emailColumn.setMinWidth(200);
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         TableColumn<Customer, String> empStatusColumn = new TableColumn<>("Status");
-        //empStatusColumn.setMinWidth(200);
         empStatusColumn.setCellValueFactory(new PropertyValueFactory<>("empStatus"));
 
         TableColumn<Customer, String> professionColumn = new TableColumn<>("Profesija");
-        //professionColumn.setMinWidth(200);
         professionColumn.setCellValueFactory(new PropertyValueFactory<>("profession"));
 
         TableColumn<Customer, String> companyColumn = new TableColumn<>("Kompanija");
-        //companysColumn.setMinWidth(200);
         companyColumn.setCellValueFactory(new PropertyValueFactory<>("company"));
 
         TableColumn<Customer, String> employeeColumn = new TableColumn<>("Zaposlenik");
-        //employeesColumn.setMinWidth(200);
         employeeColumn.setCellValueFactory(new PropertyValueFactory<>("employee"));
 
         TableColumn<Customer, String> dateColumn = new TableColumn<>("Datum registracije");
-        //dateColumn.setMinWidth(200);
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("dateRegisty"));
 
         customerTableView.getColumns().addAll(idColumn, nameColumn, surnameColumn, birthdayColumn, addressColumn, mobileColumn, emailColumn, empStatusColumn, professionColumn, companyColumn, employeeColumn, dateColumn);
+    }
 
-
-        //BUTTONs
+    private BorderPane setupButtonPanel(){
         HBox buttonHbox = new HBox(10);
         buttonHbox.getChildren().addAll(addCustomerButton, editEmployeeButton, deleteCustomerButton, deleteCheckBox);
         backButton.setOnAction(this::onClickBackButton);
@@ -130,13 +130,15 @@ public class CustomerPanel extends VBox {
         deleteCustomerButton.setOnAction(this::onClickDeleteCustomerButton);
         deleteCustomerButton.setDisable(true);
         deleteCheckBox.setOnAction(this::onClickDeleteCheckBox);
-        HBox button1Hbox = new HBox(10);
-        button1Hbox.getChildren().addAll(actionCustomerButton, actionEmployeeButton);
-        actionCustomerButton.setOnAction(this::onClickActionCustomerButton);
         actionEmployeeButton.setOnAction(this::onClickActionEmployeeButton);
-        BorderPane buttonBorderPane = new BorderPane(null, null, button1Hbox, null, buttonHbox);
+        actionCustomerButton.setOnAction(this::onClickActionCustomerButton);
+        HBox hBox=new HBox(10);
+        hBox.getChildren().addAll(actionEmployeeButton,actionCustomerButton);
+        BorderPane buttonBorderPane = new BorderPane(null, null, hBox, null, buttonHbox);
+        return buttonBorderPane;
+    }
 
-
+    private GridPane setupTextFieldPanel(){
         //UNOS TEXT FIELDA
         nameTextField.setPromptText("Enter name...");
         nameTextField.setMaxWidth(200);
@@ -149,8 +151,11 @@ public class CustomerPanel extends VBox {
         emailTextField.setPromptText("Enter email...");
         emailTextField.setMaxWidth(200);
         companyComboBox.setPromptText("Enter company...");
+        companyComboBox.setMaxWidth(200);
         professionComboBox.setPromptText("Enter profession...");
+        professionComboBox.setMaxWidth(200);
         empStatusComboBox.setPromptText("Enter status...");
+        empStatusComboBox.setMaxWidth(200);
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -173,7 +178,7 @@ public class CustomerPanel extends VBox {
         gridPane.add(companyLabel, 2, 2);
         gridPane.add(companyComboBox, 2, 3);
 
-        //UNOS CHECK BOXA
+        //UNOS COMBO BOXA
         ObservableList<EmpStatus> empStatusObservableList = empStatusComboBox.getItems();
         ObservableList<Profession> professionObservableList=professionComboBox.getItems();
         ObservableList<Company> companyObservableList=companyComboBox.getItems();
@@ -192,14 +197,31 @@ public class CustomerPanel extends VBox {
         professionObservableList.addAll(professionList);
         companyObservableList.addAll(companyList);
 
-
-        getChildren().addAll(borderPane, customerTableView, buttonBorderPane, gridPane);
+        return gridPane;
     }
 
     private void onClickActionEmployeeButton(ActionEvent actionEvent) {
+        ActionEmployeePanel actionEmployeePanel = new ActionEmployeePanel();
+        Scene scene = new Scene(actionEmployeePanel);
+        Controller.instance().getMainStage().setScene(scene);
+        Controller.instance().getMainStage().setTitle("Akcije zaposlenika");
     }
 
     private void onClickActionCustomerButton(ActionEvent actionEvent) {
+        if (customerTableView.getSelectionModel().getSelectedItem() == null) {
+            Dialog dialog = new Dialog<>();
+            dialog.setTitle("Greška");
+            dialog.setContentText("Selektujte kupca čije akcije želite da vidite");
+            dialog.show();
+            dialog.setHeight(150);
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+        }else{
+            Controller.setSelctedCustomer(customerTableView.getSelectionModel().getSelectedItem());
+            ActionCustomerPanel actionCustomerPanel = new ActionCustomerPanel();
+            Scene scene = new Scene(actionCustomerPanel);
+            Controller.instance().getMainStage().setScene(scene);
+            Controller.instance().getMainStage().setTitle("Akcije kupca");
+        }
     }
 
     private void onCLickEmpStatusComboBox(ActionEvent actionEvent) {
@@ -303,13 +325,34 @@ public class CustomerPanel extends VBox {
 
             ObservableList<Customer> customerObservableList = customerTableView.getItems();
             customerObservableList.add(customer);
+
+            addAction(customer);
         }
-        nameTextField.setText("");
-        surnameTextField.setText("");
+        clearTextField();
+    }
+
+    private void addAction(Customer customer) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        Action action=new Action();
+        action.setDate(LocalDate.now());
+        action.setCustomer(customer);
+        action.setEmployee(Controller.getCurrentEmployee());
+        action.setChannel(entityManager.find(Channel.class,3));
+        action.setResponse(entityManager.find(Response.class,1));
+        action.setDescription("regstracija");
+        entityManager.getTransaction().begin();
+        entityManager.persist(action);
+        entityManager.getTransaction().commit();
+    }
+
+    private void clearTextField() {
+        nameTextField.clear();
+        surnameTextField.clear();
         birthdayPicker.setValue(null);
-        addressTextField.setText("");
-        mobileTextField.setText("");
-        emailTextField.setText("");
+        addressTextField.clear();
+        mobileTextField.clear();
+        emailTextField.clear();
     }
 
 }

@@ -49,8 +49,8 @@ public class LoginPanel extends GridPane {
     }
 
     private void onCancelButtonClick(ActionEvent event) {
-        usernameTextField.setText("");
-        passwordField.setText("");
+        usernameTextField.clear();
+        passwordField.clear();
         messageLabel.setText("");
     }
 
@@ -84,7 +84,7 @@ public class LoginPanel extends GridPane {
             }
         } catch (NoResultException e) {
             messageLabel.setText("Nesipravno korisničko ime.");
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 }
