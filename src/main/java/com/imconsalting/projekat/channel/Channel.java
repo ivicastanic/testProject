@@ -2,6 +2,7 @@ package com.imconsalting.projekat.channel;
 
 import com.imconsalting.projekat.action.Action;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.io.Serializable;
 import java.util.List;

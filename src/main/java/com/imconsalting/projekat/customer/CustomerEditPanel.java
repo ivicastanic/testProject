@@ -2,9 +2,6 @@ package com.imconsalting.projekat.customer;
 
 import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.company.Company;
-import com.imconsalting.projekat.employee.Employee;
-import com.imconsalting.projekat.employee.EmployeePanel;
-import com.imconsalting.projekat.employee.privilege.Privilege;
 import com.imconsalting.projekat.empstatus.EmpStatus;
 import com.imconsalting.projekat.profession.Profession;
 import jakarta.persistence.EntityManager;
@@ -155,7 +152,7 @@ public class CustomerEditPanel extends GridPane {
 
             Scene scene = new Scene(new CustomerPanel());
             Controller.instance().getMainStage().setScene(scene);
-
+            Controller.instance().getEditStage().close();
         }
     }
 }

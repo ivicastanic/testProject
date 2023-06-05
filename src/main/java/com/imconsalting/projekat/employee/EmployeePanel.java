@@ -135,7 +135,7 @@ public class EmployeePanel extends VBox {
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         } else {
             Controller.setEditEmployee(employeeTableView.getSelectionModel().getSelectedItem());
-            Stage stage = new Stage();
+            Stage stage = Controller.instance().getEditStage();
             stage.setTitle("Editovanje zaposlenika");
             EmployeeEditPanel employeeEditPanel = new EmployeeEditPanel();
             Scene scene = new Scene(employeeEditPanel);

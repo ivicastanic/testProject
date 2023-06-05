@@ -2,11 +2,8 @@ package com.imconsalting.projekat.action;
 
 import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.channel.Channel;
-import com.imconsalting.projekat.customer.Customer;
 import com.imconsalting.projekat.customer.CustomerPanel;
 import com.imconsalting.projekat.employee.Employee;
-import com.imconsalting.projekat.empstatus.EmpStatus;
-import com.imconsalting.projekat.profession.Profession;
 import com.imconsalting.projekat.response.Response;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

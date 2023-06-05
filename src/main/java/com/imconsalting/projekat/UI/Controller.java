@@ -14,10 +14,18 @@ public class Controller {
     private static Employee editEmployee;
     private static Customer editCustomer;
     private static Customer selctedCustomer;
-
+    private Stage editStage=new Stage();
 
     private Controller(){
 
+    }
+
+    public Stage getEditStage() {
+        return editStage;
+    }
+
+    public void setEditStage(Stage editStage) {
+        this.editStage = editStage;
     }
 
     public static Customer getSelctedCustomer() {

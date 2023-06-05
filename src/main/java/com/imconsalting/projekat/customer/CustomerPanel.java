@@ -250,7 +250,7 @@ public class CustomerPanel extends VBox {
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         }else {
             Controller.setEditCustomer(customerTableView.getSelectionModel().getSelectedItem());
-            Stage stage = new Stage();
+            Stage stage = Controller.instance().getEditStage();
             stage.setTitle("Editovanje kupca");
             CustomerEditPanel customerEditPanel = new CustomerEditPanel();
             Scene scene = new Scene(customerEditPanel);
@@ -258,6 +258,7 @@ public class CustomerPanel extends VBox {
             stage.show();
         }
     }
+
 
     private void onClickDeleteCustomerButton(ActionEvent actionEvent) {
         if (customerTableView.getSelectionModel().getSelectedItem() == null) {

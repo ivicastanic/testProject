@@ -126,6 +126,7 @@ public class EmployeeEditPanel extends GridPane {
 
             Scene scene = new Scene(new EmployeePanel());
             Controller.instance().getMainStage().setScene(scene);
+            Controller.instance().getEditStage().close();
         }
     }
 }

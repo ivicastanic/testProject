@@ -10,7 +10,7 @@ module com.imconsalting.projekat {
 
 
 
-    opens com.imconsalting.projekat to javafx.fxml;
+
     opens com.imconsalting.projekat.customer to javafx.base,org.hibernate.orm.core;
     opens com.imconsalting.projekat.response to org.hibernate.orm.core;
     opens com.imconsalting.projekat.employee to org.hibernate.orm.core,javafx.base,jakarta.persistence;
@@ -23,9 +23,11 @@ module com.imconsalting.projekat {
     opens com.imconsalting.projekat.UI to org.hibernate.orm.core;
 
 
-    exports com.imconsalting.projekat;
+
     exports com.imconsalting.projekat.UI;
     exports com.imconsalting.projekat.UI.paneli;
     opens com.imconsalting.projekat.UI.paneli to org.hibernate.orm.core;
+    exports com.imconsalting.projekat;
+    opens com.imconsalting.projekat to org.hibernate.orm.core;
 
 }

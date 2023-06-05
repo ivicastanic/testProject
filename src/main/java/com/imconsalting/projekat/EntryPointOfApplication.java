@@ -1,5 +1,6 @@
-package com.imconsalting.projekat.UI;
+package com.imconsalting.projekat;
 
+import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.UI.paneli.LoginPanel;
 import javafx.application.Application;
 import javafx.scene.Scene;
