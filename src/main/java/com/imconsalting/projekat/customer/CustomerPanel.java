@@ -11,6 +11,7 @@ import com.imconsalting.projekat.employee.Employee;
 import com.imconsalting.projekat.employee.EmployeeEditPanel;
 import com.imconsalting.projekat.employee.privilege.Privilege;
 import com.imconsalting.projekat.empstatus.EmpStatus;
+import com.imconsalting.projekat.products.Products;
 import com.imconsalting.projekat.profession.Profession;
 import com.imconsalting.projekat.response.Response;
 import jakarta.persistence.*;
@@ -341,7 +342,8 @@ public class CustomerPanel extends VBox {
         action.setEmployee(Controller.getCurrentEmployee());
         action.setChannel(entityManager.find(Channel.class,3));
         action.setResponse(entityManager.find(Response.class,1));
-        action.setDescription("regstracija");
+        Products products=entityManager.find(Products.class,1);
+        action.setProducts(products);
         entityManager.getTransaction().begin();
         entityManager.persist(action);
         entityManager.getTransaction().commit();

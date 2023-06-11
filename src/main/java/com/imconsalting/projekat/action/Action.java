@@ -1,5 +1,6 @@
 package com.imconsalting.projekat.action;
 
+import com.imconsalting.projekat.products.Products;
 import com.imconsalting.projekat.channel.Channel;
 import com.imconsalting.projekat.customer.Customer;
 import com.imconsalting.projekat.employee.Employee;
@@ -43,10 +44,21 @@ public class Action implements Serializable {
     @JoinColumn(name = "id_response", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Response response;
+    @JoinColumn(name = "id_products", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Products products;
 
     private String description;
 
     public Action() {
+    }
+
+    public Products getProducts() {
+        return products;
+    }
+
+    public void setProducts(Products products) {
+        this.products = products;
     }
 
     public int getId() {

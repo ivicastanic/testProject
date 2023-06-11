@@ -5,6 +5,7 @@ import com.imconsalting.projekat.channel.Channel;
 import com.imconsalting.projekat.customer.Customer;
 import com.imconsalting.projekat.customer.CustomerController;
 import com.imconsalting.projekat.customer.CustomerPanel;
+import com.imconsalting.projekat.products.Products;
 import com.imconsalting.projekat.response.Response;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -53,19 +54,19 @@ public class ActionEmployeePanel extends VBox {
         actionTableView.setEditable(true);
 
         TableColumn<Action, Integer> idColumn = new TableColumn<>("Id");
-        idColumn.setMinWidth(200);
+        idColumn.setMinWidth(50);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<Action, LocalDate> dateColumn = new TableColumn<>("Datum");
-        dateColumn.setMinWidth(200);
+        dateColumn.setMinWidth(150);
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
 
         TableColumn<Action, Customer> customerColumn = new TableColumn<>("Kupac");
-        customerColumn.setMinWidth(200);
+        customerColumn.setMinWidth(150);
         customerColumn.setCellValueFactory(new PropertyValueFactory<>("customer"));
 
         TableColumn<Action, Channel> channelColumn = new TableColumn<>("Kanal");
-        channelColumn.setMinWidth(200);
+        channelColumn.setMinWidth(150);
         channelColumn.setCellValueFactory(new PropertyValueFactory<>("channel"));
         EntityManagerFactory entityManagerFactory= Persistence.createEntityManagerFactory(Controller.PU_NAME);
         EntityManager entityManager=entityManagerFactory.createEntityManager();
@@ -77,7 +78,7 @@ public class ActionEmployeePanel extends VBox {
         channelColumn.setOnEditCommit(event->onChannelFiledChange(event,r->r.setChannel(event.getNewValue())));
 
         TableColumn<Action, Response> responseColumn = new TableColumn<>("Odgovor");
-        responseColumn.setMinWidth(200);
+        responseColumn.setMinWidth(150);
         responseColumn.setCellValueFactory(new PropertyValueFactory<>("response"));
         entityManager.getTransaction().begin();
         Query query1=entityManager.createNamedQuery("Response.findAll");
@@ -86,15 +87,35 @@ public class ActionEmployeePanel extends VBox {
         responseColumn.setCellFactory(ComboBoxTableCell.forTableColumn(responsesArray));
         responseColumn.setOnEditCommit(event->onResponseFiledChange(event,r->r.setResponse(event.getNewValue())));
 
+        TableColumn<Action, Products> productsColumn = new TableColumn<>("Proizvod");
+        productsColumn.setMinWidth(150);
+        productsColumn.setCellValueFactory(new PropertyValueFactory<>("products"));
+        entityManager.getTransaction().begin();
+        Query query2 = entityManager.createNamedQuery("Products.findAll");
+        Products[] productsArray = (Products[]) query2.getResultList().toArray(new Products[0]);
+        entityManager.getTransaction().commit();
+        productsColumn.setCellFactory(ComboBoxTableCell.forTableColumn(productsArray));
+        productsColumn.setOnEditCommit(event -> onResponseFiledChange(event, r -> r.setProducts(event.getNewValue())));
+
         TableColumn<Action, String> descriptionColumn = new TableColumn<>("Opis");
-        descriptionColumn.setMinWidth(200);
+        descriptionColumn.setMinWidth(150);
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         descriptionColumn.setOnEditCommit(event->onDescriptionFiledChange(event,r->r.setDescription(event.getNewValue())));
 
 
-        actionTableView.getColumns().addAll(idColumn,dateColumn,customerColumn,channelColumn,responseColumn,descriptionColumn);
+        actionTableView.getColumns().addAll(idColumn,dateColumn,customerColumn,channelColumn,responseColumn,productsColumn,descriptionColumn);
 
+    }
+
+    private <F> void onProductsFiledChange(TableColumn.CellEditEvent<Action, F> event, Consumer<Action> actionConsumer) {
+        Action editAction = event.getRowValue();
+        actionConsumer.accept(editAction);
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.merge(editAction);
+        entityManager.getTransaction().commit();
     }
 
     private <F> void onChannelFiledChange(TableColumn.CellEditEvent<Action, F> event, Consumer<Action> actionConsumer) {

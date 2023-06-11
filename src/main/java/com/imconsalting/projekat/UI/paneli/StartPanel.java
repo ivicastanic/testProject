@@ -2,6 +2,7 @@ package com.imconsalting.projekat.UI.paneli;
 
 
 import com.imconsalting.projekat.UI.Controller;
+import com.imconsalting.projekat.company.CompanyPanel;
 import com.imconsalting.projekat.customer.CustomerPanel;
 import com.imconsalting.projekat.employee.EmployeePanel;
 import javafx.event.ActionEvent;
@@ -22,6 +23,8 @@ public class StartPanel extends VBox {
     private final Label welcomeLabel = new Label("WELCOME");
     private final Button customersButton = new Button("Customers");
     private final Button employeesButton = new Button("Employees");
+
+    private final Button companiesButton = new Button("Companies");
     private final Button logoutButton = new Button("Odjava");
     private final Label dateLabel = new Label();
     private final Image image=new Image("firma.png");
@@ -41,7 +44,7 @@ public class StartPanel extends VBox {
         FlowPane buttonPanel=new FlowPane();
         buttonPanel.setHgap(10);
         buttonPanel.setAlignment(Pos.CENTER);
-        buttonPanel.getChildren().addAll(customersButton,employeesButton,logoutButton);
+        buttonPanel.getChildren().addAll(customersButton,employeesButton,companiesButton,logoutButton);
 
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(250);
@@ -54,10 +57,18 @@ public class StartPanel extends VBox {
         logoutButton.setOnAction(this::onClickLogoutButton);
         customersButton.setOnAction(this::onClickCustomerButton);
         employeesButton.setOnAction(this::onClickEmployeeButton);
+        companiesButton.setOnAction(this::onCLickCompaniesButton);
 
         //Image middleImage=new Image("middle.gif");
         //ImageView imageView1 = new ImageView(middleImage);
         //customersButton.setGraphic(imageView1);
+    }
+
+    private void onCLickCompaniesButton(ActionEvent actionEvent) {
+        CompanyPanel companyPanel=new CompanyPanel();
+        Scene scene=new Scene(companyPanel);
+        Controller.instance().getMainStage().setScene(scene);
+        Controller.instance().getMainStage().setTitle("Companies");
     }
 
     private void onClickCustomerButton(ActionEvent actionEvent) {

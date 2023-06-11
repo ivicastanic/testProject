@@ -1,5 +1,6 @@
 package com.imconsalting.projekat.action;
 
+import com.imconsalting.projekat.products.Products;
 import com.imconsalting.projekat.UI.Controller;
 import com.imconsalting.projekat.channel.Channel;
 import com.imconsalting.projekat.customer.CustomerPanel;
@@ -39,6 +40,8 @@ public class ActionCustomerPanel extends VBox {
     private final ComboBox<Response> responseComboBox = new ComboBox<>();
     private final Label channelLabel = new Label("Kanal: ");
     private final ComboBox<Channel> channelComboBox = new ComboBox<>();
+    private final Label productsLabel = new Label("Products: ");
+    private final ComboBox<Products> productsComboBox = new ComboBox<>();
     private final Label descriptionLabel = new Label("Opis: ");
     private final TextField descriptionTextField = new TextField();
 
@@ -65,6 +68,9 @@ public class ActionCustomerPanel extends VBox {
         channelComboBox.setMaxWidth(200);
         responseComboBox.setPromptText("Enter response...");
         responseComboBox.setMaxWidth(200);
+        productsComboBox.setPromptText("Enter products...");
+        productsComboBox.setMaxWidth(200);
+
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -72,12 +78,15 @@ public class ActionCustomerPanel extends VBox {
         gridPane.add(channelComboBox, 0, 1);
         gridPane.add(responseLabel, 1, 0);
         gridPane.add(responseComboBox, 1, 1);
-        gridPane.add(descriptionLabel, 2, 0);
-        gridPane.add(descriptionTextField, 2, 1);
+        gridPane.add(productsLabel,2,0);
+        gridPane.add(productsComboBox,2,1);
+        gridPane.add(descriptionLabel, 3 ,0);
+        gridPane.add(descriptionTextField, 3, 1);
 
         //UNOS COMBO BOXA
         ObservableList<Channel> channelObservableList = channelComboBox.getItems();
         ObservableList<Response> responseObservableList = responseComboBox.getItems();
+        ObservableList<Products> productsObservableList=productsComboBox.getItems();
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
@@ -85,9 +94,12 @@ public class ActionCustomerPanel extends VBox {
         List<Channel> channelList = query.getResultList();
         query = entityManager.createNamedQuery("Response.findAll");
         List<Response> responseList = query.getResultList();
+        query=entityManager.createNamedQuery("Products.findAll");
+        List<Products> productsList=query.getResultList();
         entityManager.getTransaction().commit();
         channelObservableList.addAll(channelList);
         responseObservableList.addAll(responseList);
+        productsObservableList.addAll(productsList);
 
         return gridPane;
     }
@@ -127,7 +139,7 @@ public class ActionCustomerPanel extends VBox {
     }
 
     private void onClickAddActionButton(ActionEvent actionEvent) {
-        if (channelComboBox.getValue() == null || responseComboBox.getValue() == null) {
+        if (channelComboBox.getValue() == null || responseComboBox.getValue() == null || productsComboBox.getValue()==null) {
             Dialog dialog = new Dialog<>();
             dialog.setTitle("Greška");
             dialog.setContentText("Niste popunili sva polja!");
@@ -141,6 +153,7 @@ public class ActionCustomerPanel extends VBox {
             action.setEmployee(Controller.getCurrentEmployee());
             action.setChannel(channelComboBox.getValue());
             action.setResponse(responseComboBox.getValue());
+            action.setProducts(productsComboBox.getValue());
             if (!descriptionTextField.getText().isBlank()) {
                 action.setDescription(descriptionTextField.getText());
             }
@@ -156,6 +169,7 @@ public class ActionCustomerPanel extends VBox {
         descriptionTextField.clear();
         channelComboBox.setValue(null);
         responseComboBox.setValue(null);
+        productsComboBox.setValue(null);
     }
 
     private void onClickDeleteCheckBox(ActionEvent actionEvent) {
@@ -172,19 +186,19 @@ public class ActionCustomerPanel extends VBox {
         actionTableView.setEditable(true);
 
         TableColumn<Action, Integer> idColumn = new TableColumn<>("Id");
-        idColumn.setMinWidth(200);
+        idColumn.setMinWidth(50);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<Action, LocalDate> dateColumn = new TableColumn<>("Datum");
-        dateColumn.setMinWidth(200);
+        dateColumn.setMinWidth(150);
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
 
         TableColumn<Action, Employee> employeeColumn=new TableColumn<>("Zaposlenik");
-        employeeColumn.setMinWidth(200);
+        employeeColumn.setMinWidth(150);
         employeeColumn.setCellValueFactory(new PropertyValueFactory<>("employee"));
 
         TableColumn<Action, Channel> channelColumn = new TableColumn<>("Kanal");
-        channelColumn.setMinWidth(200);
+        channelColumn.setMinWidth(150);
         channelColumn.setCellValueFactory(new PropertyValueFactory<>("channel"));
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -196,7 +210,7 @@ public class ActionCustomerPanel extends VBox {
         channelColumn.setOnEditCommit(event -> onChannelFiledChange(event, r -> r.setChannel(event.getNewValue())));
 
         TableColumn<Action, Response> responseColumn = new TableColumn<>("Odgovor");
-        responseColumn.setMinWidth(200);
+        responseColumn.setMinWidth(150);
         responseColumn.setCellValueFactory(new PropertyValueFactory<>("response"));
         entityManager.getTransaction().begin();
         Query query1 = entityManager.createNamedQuery("Response.findAll");
@@ -205,13 +219,34 @@ public class ActionCustomerPanel extends VBox {
         responseColumn.setCellFactory(ComboBoxTableCell.forTableColumn(responsesArray));
         responseColumn.setOnEditCommit(event -> onResponseFiledChange(event, r -> r.setResponse(event.getNewValue())));
 
+        TableColumn<Action, Products> productsColumn = new TableColumn<>("Proizvod");
+        productsColumn.setMinWidth(150);
+        productsColumn.setCellValueFactory(new PropertyValueFactory<>("products"));
+        entityManager.getTransaction().begin();
+        Query query2 = entityManager.createNamedQuery("Products.findAll");
+        Products[] productsArray = (Products[]) query2.getResultList().toArray(new Products[0]);
+        entityManager.getTransaction().commit();
+        productsColumn.setCellFactory(ComboBoxTableCell.forTableColumn(productsArray));
+        productsColumn.setOnEditCommit(event -> onResponseFiledChange(event, r -> r.setProducts(event.getNewValue())));
+
+
         TableColumn<Action, String> descriptionColumn = new TableColumn<>("Opis");
-        descriptionColumn.setMinWidth(200);
+        descriptionColumn.setMinWidth(150);
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         descriptionColumn.setOnEditCommit(event -> onDescriptionFiledChange(event, r -> r.setDescription(event.getNewValue())));
 
-        actionTableView.getColumns().addAll(idColumn, dateColumn,employeeColumn, channelColumn, responseColumn, descriptionColumn);
+        actionTableView.getColumns().addAll(idColumn, dateColumn,employeeColumn, channelColumn,responseColumn, productsColumn, descriptionColumn);
+    }
+
+    private <F> void onProductsFiledChange(TableColumn.CellEditEvent<Action, F> event, Consumer<Action> actionConsumer) {
+        Action editAction = event.getRowValue();
+        actionConsumer.accept(editAction);
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(Controller.PU_NAME);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.merge(editAction);
+        entityManager.getTransaction().commit();
     }
 
     private <F> void onChannelFiledChange(TableColumn.CellEditEvent<Action, F> event, Consumer<Action> actionConsumer) {

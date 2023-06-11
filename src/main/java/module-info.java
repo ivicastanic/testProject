@@ -17,7 +17,7 @@ module com.imconsalting.projekat {
     opens com.imconsalting.projekat.employee.privilege to org.hibernate.orm.core;
     opens com.imconsalting.projekat.profession to org.hibernate.orm.core;
     opens com.imconsalting.projekat.action to org.hibernate.orm.core,javafx.base;
-    opens com.imconsalting.projekat.company to org.hibernate.orm.core;
+    opens com.imconsalting.projekat.company to org.hibernate.orm.core,javafx.base;
     opens com.imconsalting.projekat.channel to org.hibernate.orm.core;
     opens com.imconsalting.projekat.empstatus to org.hibernate.orm.core;
     opens com.imconsalting.projekat.UI to org.hibernate.orm.core;
@@ -29,5 +29,7 @@ module com.imconsalting.projekat {
     opens com.imconsalting.projekat.UI.paneli to org.hibernate.orm.core;
     exports com.imconsalting.projekat;
     opens com.imconsalting.projekat to org.hibernate.orm.core;
+    exports com.imconsalting.projekat.products;
+    opens com.imconsalting.projekat.products to org.hibernate.orm.core;
 
 }

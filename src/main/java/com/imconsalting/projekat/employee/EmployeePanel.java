@@ -241,6 +241,5 @@ public class EmployeePanel extends VBox {
         usernameTextField.clear();
         passwordField.clear();
     }
-
 }
 

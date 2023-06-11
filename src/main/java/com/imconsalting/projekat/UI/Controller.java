@@ -1,5 +1,6 @@
 package com.imconsalting.projekat.UI;
 
+import com.imconsalting.projekat.company.Company;
 import com.imconsalting.projekat.customer.Customer;
 import com.imconsalting.projekat.employee.Employee;
 import javafx.stage.Stage;
@@ -15,9 +16,27 @@ public class Controller {
     private static Customer editCustomer;
     private static Customer selctedCustomer;
     private Stage editStage=new Stage();
+    private static Company currentCompany;
+    private static Company editCompany;
 
     private Controller(){
 
+    }
+
+    public static Company getCurrentCompany() {
+        return currentCompany;
+    }
+
+    public static void setCurrentCompany(Company currentCompany) {
+        Controller.currentCompany = currentCompany;
+    }
+
+    public static Company getEditCompany() {
+        return editCompany;
+    }
+
+    public static void setEditCompany(Company editCompany) {
+        Controller.editCompany = editCompany;
     }
 
     public Stage getEditStage() {
